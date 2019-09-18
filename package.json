@@ -31,5 +31,8 @@
   ],
   "directories": {
     "test": "tests"
+  },
+  "dependencies": {
+    "@aws-crypto/client-node": "0.1.0-preview.4"
   }
 }
