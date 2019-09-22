@@ -18,27 +18,33 @@ describe('KmsEncryption', () => {
 		sandbox.restore();
 	});
 
-	it('Should error on create a instance', async () => {
+	it('Should error on create a instance when received an invalid parameter', async () => {
+		// invalid type
 		assert.throws(() => {
 			new KmsEncryption('');
 		}, KmsEncryptionError);
 
+		// empty ARNs
 		assert.throws(() => {
 			new KmsEncryption({ keyArn: '', aliasArn: '' });
 		}, KmsEncryptionError);
 
+		// invalid format ARNs
 		assert.throws(() => {
 			new KmsEncryption({ keyArn: 'arn:test:error', aliasArn: 'arn:test:error' });
 		}, KmsEncryptionError);
 
+		// invalid type(key or alias) in ARNs
 		assert.throws(() => {
 			new KmsEncryption({ keyArn: 'arn:test:error:error:invalid:test', aliasArn: 'arn:test:error:error:invalid:test' });
 		}, KmsEncryptionError);
 
+		// valid type but empty value(type value)
 		assert.throws(() => {
 			new KmsEncryption({ keyArn: 'arn:test:error:error:key:', aliasArn: 'arn:test:error:error:alias:' });
 		}, KmsEncryptionError);
 
+		// valid structure ARN but invalid content
 		assert.throws(() => {
 			new KmsEncryption({ keyArn: 'arn:test:error:error:key:test', aliasArn: 'arn:test:error:error:alias:test' });
 		}, KmsEncryptionError);
