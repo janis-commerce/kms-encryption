@@ -64,7 +64,7 @@ describe('KmsEncryption', () => {
 		assert.equal(res, 'dGhpcyBpcyBhIHRlc3Q=');
 	});
 
-	it('Should error on encrypt', () => {
+	it('Should error on encrypt when received a invalid body', () => {
 		const encryptStub = sandbox.stub(this.encrypt._kms, 'encrypt');
 		encryptStub.returns({
 			promise: () => Promise.resolve({})
@@ -73,6 +73,19 @@ describe('KmsEncryption', () => {
 		assert.rejects(async () => {
 			await this.encrypt.encrypt('this is a test');
 		}, new KmsEncryptionError('Error on encrypt: invalid response from service', KmsEncryptionError.codes.encrypt));
+
+		assert(encryptStub.called);
+	});
+
+	it('Should error on encrypt when error on call to service', () => {
+		const encryptStub = sandbox.stub(this.encrypt._kms, 'encrypt');
+		encryptStub.returns({
+			promise: () => Promise.reject()
+		});
+
+		assert.rejects(async () => {
+			await this.encrypt.encrypt('this is a test');
+		}, new KmsEncryptionError('Error on encrypt: call to service', KmsEncryptionError.codes.encrypt));
 
 		assert(encryptStub.called);
 	});
@@ -91,7 +104,7 @@ describe('KmsEncryption', () => {
 		assert.equal(res, 'this is a test');
 	});
 
-	it('Should error on decrypt', () => {
+	it('Should error on decrypt when received a invalid body', () => {
 		const decryptStub = sandbox.stub(this.encrypt._kms, 'decrypt');
 		decryptStub.returns({
 			promise: () => Promise.resolve({})
@@ -99,6 +112,18 @@ describe('KmsEncryption', () => {
 		assert.rejects(async () => {
 			await this.encrypt.decrypt('dGhpcyBpcyBhIHRlc3Q=');
 		}, new KmsEncryptionError('Error on decrypt: invalid response from service', KmsEncryptionError.codes.decrypt));
+
+		assert(decryptStub.called);
+	});
+
+	it('Should error on decrypt when error on call to service', () => {
+		const decryptStub = sandbox.stub(this.encrypt._kms, 'decrypt');
+		decryptStub.returns({
+			promise: () => Promise.reject()
+		});
+		assert.rejects(async () => {
+			await this.encrypt.decrypt('dGhpcyBpcyBhIHRlc3Q=');
+		}, new KmsEncryptionError('Error on decrypt: call to service', KmsEncryptionError.codes.decrypt));
 
 		assert(decryptStub.called);
 	});
